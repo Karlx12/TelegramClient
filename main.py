@@ -1,13 +1,12 @@
 import asyncio
-from libs.TelegramBot import socket_manager
+from libs.SocketManager.SocketManager import SocketManager
+from libs.config import config
 from libs.TelegramBot import start_bot
-
-socket_manager = socket_manager
 
 
 async def main():
-    # Instancia del SocketManager ya creada en telegram_bot
-    global socket_manager
+    await config.set_socket_manager(SocketManager())
+    socket_manager = await config.get_socket_manager()
 
     # Conectar el cliente al servidor socket
     await socket_manager.connect("localhost", 8080)
