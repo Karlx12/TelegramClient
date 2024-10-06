@@ -18,25 +18,30 @@ class OutMessageManager:
     @staticmethod
     def send_command_format(message: str) -> dict:
         """Formatea un mensaje de tipo 'send_order' a un diccionario válido"""
-        list_args = OutMessageManager.parse_message(message, 6)
+        list_args = OutMessageManager.parse_message(message, 7)
         if not list_args:
             return {}
 
         command = "send_order"
         client_id = list_args[0] if len(list_args) > 0 else ""
-        side = list_args[1] if len(list_args) > 1 else "buy"
-        symbol = list_args[2] if len(list_args) > 2 else ""
-        price = (
-            float(list_args[3]) if len(list_args) > 3 and list_args[3] else 0.0
+        magic = (
+            int(list_args[1])
+            if len(list_args) > 1 and list_args[1].isdigit()
+            else 0
         )
-        volume = (
+        side = list_args[2] if len(list_args) > 2 else "buy"
+        symbol = list_args[3] if len(list_args) > 3 else ""
+        price = (
             float(list_args[4]) if len(list_args) > 4 and list_args[4] else 0.0
         )
-        takeprofit = (
+        volume = (
             float(list_args[5]) if len(list_args) > 5 and list_args[5] else 0.0
         )
-        stoploss = (
+        takeprofit = (
             float(list_args[6]) if len(list_args) > 6 and list_args[6] else 0.0
+        )
+        stoploss = (
+            float(list_args[7]) if len(list_args) > 7 and list_args[7] else 0.0
         )
 
         logger.debug(f"args: {list_args}")
@@ -53,13 +58,14 @@ class OutMessageManager:
             "type_client": "Telegram",
             "order": {
                 "side": int(side),
+                "magic": int(magic),
                 "symbol": symbol,
                 "price": price,
                 "volume": volume,
                 "takeProfit": takeprofit,
                 "stopLoss": stoploss,
                 "slippage": 1.0,
-                "commet": "Order from Telegram",
+                "comment": "",
             },
         }
 
@@ -71,19 +77,17 @@ class OutMessageManager:
             return {}
 
         command = "close_order"
-        client_id, symbol, trade_id = list_args[:3]
+        client_id, magic, symbol = list_args[:3]
 
-        if not client_id or not trade_id.isdigit() or not symbol:
-            logger.error(
-                "El 'client_id', 'trade_id' o 'symbol' no son válidos"
-            )
+        if not client_id or not magic.isdigit() or not symbol:
+            logger.error("El 'client_id', 'magic' o 'symbol' no son válidos")
             return {}
 
         return {
             "command": command,
             "client_id": client_id,
+            "magic": int(magic),
             "symbol": symbol.upper(),
-            "trade_id": int(trade_id),
         }
 
     @staticmethod

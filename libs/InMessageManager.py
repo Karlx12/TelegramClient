@@ -39,7 +39,7 @@ class InMessageManager:
         )
         symbol = message.get("symbol", "N/A")
         timestamp = message.get("timestamp", 0)
-        trade_id = message.get("trade_id", "N/A")
+        magic = message.get("magic", "N/A")
         volume = message.get("volume", 0.0)
 
         trade_time = datetime.fromtimestamp(timestamp).strftime(
@@ -53,7 +53,7 @@ class InMessageManager:
             f"Símbolo: {symbol}\n"
             f"Precio: {price}\n"
             f"Volumen: {volume}\n"
-            f"ID de la transacción: {trade_id}\n"
+            f"Número Mágico: {magic}\n"
             f"Fecha: {trade_time}\n"
             f"Estado: {status_message}"
         )
@@ -65,7 +65,7 @@ class InMessageManager:
         symbol = message.get("symbol", "N/A")
         status_code = message.get("status_code", "N/A")
         timestamp = message.get("timestamp", 0)
-        trade_id = message.get("trade_id", "N/A")
+        magic = message.get("magic", "N/A")
         volume = message.get("volume_closed", 0.0)
 
         close_time = datetime.fromtimestamp(timestamp).strftime(
@@ -80,7 +80,7 @@ class InMessageManager:
             f"Cliente: {client_id}\n"
             f"Símbolo: {symbol}\n"
             f"Volumen: {volume}\n"
-            f"ID de la transacción: {trade_id}\n"
+            f"Número Mágico: {magic}\n"
             f"Fecha de cierre: {close_time}\n"
             f"Estado: {status_message}"
         )
@@ -97,12 +97,12 @@ class InMessageManager:
 
         trade_summaries = []
         for trade in trades:
-            trade_id = trade.get("trade_id", "N/A")
+            magic = trade.get("magic", "N/A")
             symbol = trade.get("symbol", "N/A")
             volume = trade.get("volume", 0.0)
             close_price = trade.get("price", 0.0)
             trade_summaries.append(
-                f"ID: {trade_id}, Símbolo: {symbol},"
+                f"Número Mágico: {magic}, Símbolo: {symbol},"
                 f" Volumen: {volume}, Precio de cierre: {close_price}"
             )
 
