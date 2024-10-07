@@ -108,3 +108,64 @@ class OutMessageManager:
             "command": command,
             "client_id": client_id,
         }
+
+    @staticmethod
+    def open_positions_command_format(message: str) -> dict:
+        """
+        Formatea un mensaje de tipo 'open_positions' a un diccionario válido
+        """
+        list_args = OutMessageManager.parse_message(message, 2)
+        if not list_args:
+            return {}
+
+        command = "open_positions"
+        client_id = list_args[0]
+
+        if not client_id:
+            logger.error("El 'client_id' no es válido")
+            return {}
+
+        return {
+            "command": command,
+            "client_id": client_id,
+        }
+
+    @staticmethod
+    def margin_level_command_format(message: str) -> dict:
+        """
+        Formatea un mensaje de tipo 'margin_level' a un diccionario válido
+        """
+        list_args = OutMessageManager.parse_message(message, 2)
+        if not list_args:
+            return {}
+
+        command = "margin_level"
+        client_id = list_args[0]
+
+        if not client_id:
+            logger.error("El 'client_id' no es válido")
+            return {}
+
+        return {
+            "command": command,
+            "client_id": client_id,
+        }
+
+    @staticmethod
+    def close_all_command_format(message: str) -> dict:
+        """Formatea un mensaje de tipo 'close_all' a un diccionario válido"""
+        list_args = OutMessageManager.parse_message(message, 2)
+        if not list_args:
+            return {}
+
+        command = "close_all"
+        client_id = list_args[0]
+
+        if not client_id:
+            logger.error("El 'client_id' no es válido")
+            return {}
+
+        return {
+            "command": command,
+            "client_id": client_id,
+        }
