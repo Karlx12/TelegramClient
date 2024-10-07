@@ -1,6 +1,6 @@
 from libs.config import config
 import json
-from libs.commands.ICommand import ICommand
+from libs.OutMessageCommands.ICommand import ICommand
 from libs.logger import logger
 from libs.OutMessageManager import OutMessageManager
 
