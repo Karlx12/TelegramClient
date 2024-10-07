@@ -1,10 +1,20 @@
 import asyncio
 import os
-from libs.commands import CloseCommand, InfoCommand, SendCommand
+from libs.OutMessageCommands import (
+    CloseCommand,
+    InfoCommand,
+    SendCommand,
+    CloseAllCommand,
+    MarginLevelCommand,
+    OpenPositionsCommand,
+)
 from telebot.async_telebot import AsyncTeleBot
-from telebot import types
-from telebot.types import Message
-from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
+from telebot.types import Message, BotCommand
+from telebot.asyncio_handler_backends import (
+    BaseMiddleware,
+    CancelUpdate,
+    ContinueHandling,
+)
 from libs.logger import logger
 from libs.config import config
 
@@ -15,17 +25,23 @@ CHAT_ID_VALIDS = list(map(int, CHAT_ID_VALIDS))
 logger.debug(f"CHAT_ID_VALIDS: {CHAT_ID_VALIDS}")
 
 COMMANDS = [
-    types.BotCommand("start", "Start Bot"),
-    types.BotCommand("help", "List of commands"),
-    types.BotCommand("send", "Send order to server"),
-    types.BotCommand("close", "Close an order"),
-    types.BotCommand("info", "Get info of the account"),
+    BotCommand("start", "Start Bot"),
+    BotCommand("help", "List of commands"),
+    BotCommand("send", "Send order to server"),
+    BotCommand("close", "Close an order"),
+    BotCommand("info", "Get info of the account"),
+    BotCommand("maginlevel", "Get the margin level of the account"),
+    BotCommand("closeall", "Close all orders"),
+    BotCommand("openpositions", "Get the open orders"),
 ]
 
 commands = {
     "send": SendCommand.SendCommand(),
     "close": CloseCommand.CloseCommand(),
     "info": InfoCommand.InfoCommand(),
+    "margin_level": MarginLevelCommand.MarginLevelCommand(),
+    "close_all": CloseAllCommand.CloseAllCommand(),
+    "open_positions": OpenPositionsCommand.OpenPositionsCommand(),
 }
 
 
@@ -34,7 +50,7 @@ class CheckChatMiddleware(BaseMiddleware):
     def __init__(self):
         self.update_types = ["message"]
 
-    async def pre_process(self, message: types.Message, data):
+    async def pre_process(self, message: Message, data):
         if message.chat.id not in CHAT_ID_VALIDS:
             logger.warning(f"Chat no valido: {message.chat.id}")
             await bot.send_message(message.chat.id, "Chat no autorizado.")
@@ -50,7 +66,7 @@ class SetChatIDMiddleware(BaseMiddleware):
     def __init__(self):
         self.update_types = ["message"]
 
-    async def pre_process(self, message: types.Message, data):
+    async def pre_process(self, message: Message, data):
         if message.chat.id in CHAT_ID_VALIDS:
             logger.debug(f"Chat id: {message.chat.id}")
             config.chat_id = message.chat.id
@@ -78,21 +94,61 @@ async def execute_command(command_key, message_text, reply_message: Message):
 
 async def register_handlers():
     @bot.message_handler(commands=["start", "help"])
-    async def send_welcome(message: types.Message):
+    async def send_welcome(message: Message):
         logger.info("response welcome")
-        await bot.reply_to(message, "Howdy, how are you doing?")
+        await bot.reply_to(message, "Bienvenido, todo en orden")
+        return ContinueHandling()
 
     @bot.message_handler(commands=["send"])
-    async def handle_send_message(message: types.Message):
+    async def handle_send_message(message: Message):
         await execute_command("send", message.text, message)
 
     @bot.message_handler(commands=["close"])
-    async def handle_close_message(message: types.Message):
+    async def handle_close_message(message: Message):
         await execute_command("close", message.text, message)
 
     @bot.message_handler(commands=["info"])
-    async def handle_info_message(message: types.Message):
+    async def handle_info_message(message: Message):
         await execute_command("info", message.text, message)
+
+    @bot.message_handler(commands=["margin_level"])
+    async def handle_margin_level_message(message: Message):
+        await execute_command("margin_level", message.text, message)
+
+    @bot.message_handler(commands=["close_all"])
+    async def handle_close_all_message(message: Message):
+        confirmation_message = await bot.reply_to(
+            message,
+            "¿Estás seguro de que deseas cerrar todas las órdenes? "
+            + "Responde con 'yes' o 'no'.",
+        )
+        bot.register_next_step_handler(
+            confirmation_message, process_close_all_confirmation, message
+        )
+
+    async def process_close_all_confirmation(
+        confirmation_message: Message, original_message: Message
+    ):
+        if confirmation_message.text.lower() == "yes":
+            await execute_command(
+                "close_all", original_message.text, original_message
+            )
+        else:
+            await bot.reply_to(original_message, "Operación cancelada.")
+
+    @bot.message_handler(commands=["open_positions"])
+    async def handle_open_positions_message(message: Message):
+        await execute_command("open_positions", message.text, message)
+
+    @bot.message_handler(commands=["help"])
+    async def handle_help_message(message: Message):
+        await bot.reply_to(
+            message,
+            "/send [client_id] [magic] [side: buy/sell] [symbol] [price] "
+            + "[volume] [takeprofit (opcional)] [stoploss (opcional)]\n"
+            + "/close [client_id] [magic] [symbol]\n"
+            + "/info [client_id]\n",
+        )
 
 
 async def start_bot():
@@ -111,7 +167,7 @@ async def start_bot():
         timeout=60,
     )
     try:
-        await bot.polling(skip_pending=False)
+        await bot.polling(skip_pending=True, non_stop=True)
     except Exception as e:
         logger.warning(f"Proceso detenido antes de tiempo: {e}")
     finally:
