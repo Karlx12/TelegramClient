@@ -24,6 +24,7 @@ class OutMessageManager:
 
         command = "send_order"
         client_id = list_args[0] if len(list_args) > 0 else ""
+        logger.debug(f"client_id: {client_id}")
         magic = (
             int(list_args[1])
             if len(list_args) > 1 and list_args[1].isdigit()
@@ -78,6 +79,7 @@ class OutMessageManager:
 
         command = "close_order"
         client_id, magic, symbol = list_args[:3]
+        logger.debug(f"client_id: {client_id}")
 
         if not client_id or not magic.isdigit() or not symbol:
             logger.error("El 'client_id', 'magic' o 'symbol' no son válidos")
@@ -99,6 +101,7 @@ class OutMessageManager:
 
         command = "get_info_account"
         client_id = list_args[0]
+        logger.debug(f"client_id: {client_id}")
 
         if not client_id:
             logger.error("El 'client_id' no es válido")
@@ -120,6 +123,7 @@ class OutMessageManager:
 
         command = "open_positions"
         client_id = list_args[0]
+        logger.debug(f"client_id: {client_id}")
 
         if not client_id:
             logger.error("El 'client_id' no es válido")
@@ -141,6 +145,7 @@ class OutMessageManager:
 
         command = "margin_level"
         client_id = list_args[0]
+        logger.debug(f"client_id: {client_id}")
 
         if not client_id:
             logger.error("El 'client_id' no es válido")
@@ -160,6 +165,7 @@ class OutMessageManager:
 
         command = "close_all"
         client_id = list_args[0]
+        logger.debug(f"client_id: {client_id}")
 
         if not client_id:
             logger.error("El 'client_id' no es válido")
