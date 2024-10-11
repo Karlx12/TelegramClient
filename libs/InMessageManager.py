@@ -26,7 +26,7 @@ class InMessageManager:
             return await InMessageManager.format_close_all_return(message)
         elif command == "open_positions_return":
             return await InMessageManager.format_open_positions_return(message)
-        elif command == "account_info_return":
+        elif command == "get_info_account_return":
             return await InMessageManager.format_account_info_return(message)
         elif command == "margin_level_return":
             return await InMessageManager.format_margin_level_return(message)

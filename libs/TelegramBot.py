@@ -30,7 +30,7 @@ COMMANDS = [
     BotCommand("send", "Send order to server"),
     BotCommand("close", "Close an order"),
     BotCommand("info", "Get info of the account"),
-    BotCommand("maginlevel", "Get the margin level of the account"),
+    BotCommand("marginlevel", "Get the margin level of the account"),
     BotCommand("closeall", "Close all orders"),
     BotCommand("openpositions", "Get the open orders"),
 ]
