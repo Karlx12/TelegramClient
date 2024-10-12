@@ -1,5 +1,7 @@
 import asyncio
 import os
+
+from aiohttp import ClientError
 from libs.OutMessageCommands import (
     CloseCommand,
     InfoCommand,
@@ -79,16 +81,48 @@ class SetChatIDMiddleware(BaseMiddleware):
 # Función auxiliar para manejar el envío de mensajes
 async def execute_command(command_key, message_text, reply_message: Message):
     if config.writer:
-        try:
-            if await commands[command_key].execute(message_text):
-                await bot.reply_to(reply_message, "Mensaje enviado")
-            else:
-                await bot.reply_to(reply_message, "Error en el mensaje")
-            logger.info("Mensaje enviado con éxito al servidor")
-        except Exception as e:
-            logger.error(f"Error al enviar mensaje: {e}")
-            await bot.reply_to(reply_message, "Error al enviar mensaje")
+        retries = 0
+        delay = 2  # Tiempo inicial de espera antes de reintentar
+        success = False
+        max_retries = 3
+
+        while retries < max_retries and not success:
+            try:
+                # Ejecuta el comando correspondiente
+                if await commands[command_key].execute(message_text):
+                    try:
+                        # Intenta responder al mensaje
+                        await bot.reply_to(reply_message, "Mensaje enviado")
+                        success = True
+                        logger.info("Mensaje enviado con éxito al servidor")
+                        break  # Sale del ciclo si tiene éxito
+                    except ClientError as e:
+                        retries += 1  # Incrementa el número de reintentos
+                        logger.warning(f"Error al enviar mensaje: {e}")
+                        if retries == max_retries:
+                            await bot.reply_to(
+                                reply_message,
+                                "Error al enviar mensaje tras varios intentos",
+                            )
+                        else:
+                            await asyncio.sleep(
+                                delay
+                            )  # Espera antes de reintentar
+                            delay *= (
+                                2  # Aumenta el tiempo de espera (exponencial)
+                            )
+                else:
+                    # Si la ejecución del comando falla
+                    await bot.reply_to(reply_message, "Error en el mensaje")
+                    break
+            except Exception as e:
+                logger.error(f"Error inesperado al ejecutar el comando: {e}")
+                await bot.reply_to(
+                    reply_message, "Error al ejecutar el comando"
+                )
+                break  # Sale del ciclo en caso de error no manejado
     else:
+        # Si el servidor no está conectado
         await bot.reply_to(reply_message, "No estoy conectado al servidor.")
 
 
@@ -111,11 +145,11 @@ async def register_handlers():
     async def handle_info_message(message: Message):
         await execute_command("info", message.text, message)
 
-    @bot.message_handler(commands=["margin_level"])
+    @bot.message_handler(commands=["marginlevel"])
     async def handle_margin_level_message(message: Message):
         await execute_command("margin_level", message.text, message)
 
-    @bot.message_handler(commands=["close_all"])
+    @bot.message_handler(commands=["closeall"])
     async def handle_close_all_message(message: Message):
         confirmation_message = await bot.reply_to(
             message,
@@ -136,7 +170,7 @@ async def register_handlers():
         else:
             await bot.reply_to(original_message, "Operación cancelada.")
 
-    @bot.message_handler(commands=["open_positions"])
+    @bot.message_handler(commands=["openpositions"])
     async def handle_open_positions_message(message: Message):
         await execute_command("open_positions", message.text, message)
 
@@ -166,14 +200,15 @@ async def start_bot():
         bot.set_my_commands(commands=COMMANDS),
         timeout=60,
     )
-    try:
-        await bot.polling(skip_pending=True, non_stop=True)
-    except Exception as e:
-        logger.warning(f"Proceso detenido antes de tiempo: {e}")
-    finally:
-        logger.info("Cerrando sesión")
-        await bot.close_session()
 
-
-if __name__ == "__main__":
-    asyncio.run(start_bot())
+    while True:
+        try:
+            await bot.polling(skip_pending=True)
+        except Exception as e:
+            logger.warning(
+                f"Error en la conexión, reintentando en 5 segundos: {e}"
+            )
+            await asyncio.sleep(5)  # Pausa antes de intentar reconectar
+        finally:
+            logger.info("Cerrando sesión")
+            await bot.close_session()
