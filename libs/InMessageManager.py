@@ -137,6 +137,14 @@ class InMessageManager:
             "%Y-%m-%d %H:%M:%S"
         )
 
+        if not positions:
+            return (
+                f"📂 *Posiciones Abiertas*\n"
+                f"Cliente: {client_id}\n"
+                f"Fecha de consulta: {open_time}\n"
+                f"No hay posiciones abiertas."
+            )
+
         position_summaries = []
         for position in positions:
             magic = position.get("magic", "N/A")
