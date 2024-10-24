@@ -12,11 +12,7 @@ from libs.OutMessageCommands import (
 )
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message, BotCommand
-from telebot.asyncio_handler_backends import (
-    BaseMiddleware,
-    CancelUpdate,
-    ContinueHandling,
-)
+from telebot.asyncio_handler_backends import BaseMiddleware, CancelUpdate
 from libs.logger import logger
 from libs.config import config
 
@@ -25,7 +21,7 @@ bot = AsyncTeleBot(TOKEN)
 CHAT_ID_VALIDS = os.getenv("CHAT_ID", "").split(",")
 CHAT_ID_VALIDS = list(map(int, CHAT_ID_VALIDS))
 logger.debug(f"CHAT_ID_VALIDS: {CHAT_ID_VALIDS}")
-
+user_confirmation_state = {}
 COMMANDS = [
     BotCommand("start", "Start Bot"),
     BotCommand("help", "List of commands"),
@@ -127,11 +123,12 @@ async def execute_command(command_key, message_text, reply_message: Message):
 
 
 async def register_handlers():
-    @bot.message_handler(commands=["start", "help"])
+    global user_confirmation_state
+
+    @bot.message_handler(commands=["start"])
     async def send_welcome(message: Message):
         logger.info("response welcome")
         await bot.reply_to(message, "Bienvenido, todo en orden")
-        return ContinueHandling()
 
     @bot.message_handler(commands=["send"])
     async def handle_send_message(message: Message):
@@ -151,24 +148,35 @@ async def register_handlers():
 
     @bot.message_handler(commands=["closeall"])
     async def handle_close_all_message(message: Message):
-        confirmation_message = await bot.reply_to(
+        await bot.reply_to(
             message,
-            "¿Estás seguro de que deseas cerrar todas las órdenes? "
-            + "Responde con 'yes' o 'no'.",
+            "¿Estás seguro de que deseas cerrar todas las órdenes?"
+            + " Awnser: 'yes' or 'no'.",
         )
-        bot.register_next_step_handler(
-            confirmation_message, process_close_all_confirmation, message
-        )
+        # Guardar el estado de espera de confirmación para el usuario
+        user_confirmation_state[message.chat.id] = {
+            "state": "waiting_for_confirmation",
+            "message": message,
+        }
 
-    async def process_close_all_confirmation(
-        confirmation_message: Message, original_message: Message
-    ):
-        if confirmation_message.text.lower() == "yes":
+    @bot.message_handler(
+        func=lambda msg: user_confirmation_state.get(msg.chat.id, {}).get(
+            "state"
+        )
+        == "waiting_for_confirmation"
+    )
+    async def process_close_all_confirmation(message: Message):
+        if message.text.lower() == "yes":
+            original_message = user_confirmation_state[message.chat.id][
+                "message"
+            ]
             await execute_command(
                 "close_all", original_message.text, original_message
             )
         else:
-            await bot.reply_to(original_message, "Operación cancelada.")
+            await bot.reply_to(message, "Operación cancelada.")
+
+        user_confirmation_state.pop(message.chat.id, None)
 
     @bot.message_handler(commands=["openpositions"])
     async def handle_open_positions_message(message: Message):
@@ -203,7 +211,7 @@ async def start_bot():
 
     while True:
         try:
-            await bot.polling(skip_pending=True)
+            await bot.polling(skip_pending=True, non_stop=True)
         except Exception as e:
             logger.warning(
                 f"Error en la conexión, reintentando en 5 segundos: {e}"
