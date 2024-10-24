@@ -76,6 +76,7 @@ class InMessageManager:
         timestamp = message.get("timestamp", 0)
         magic = message.get("magic", "N/A")
         volume = message.get("volume_closed", 0.0)
+        side = int(message.get("side", None))
 
         close_time = datetime.fromtimestamp(timestamp).strftime(
             "%Y-%m-%d %H:%M:%S"
@@ -83,9 +84,10 @@ class InMessageManager:
         status_message = (
             "Cierre exitoso" if status_code == 0 else "Error en cierre"
         )
+        side_text = "Compra" if side == 0 else "Venta"
 
         return (
-            f"🔒 *Orden Cerrada*\n"
+            f"🔒 *Orden de {side_text} Cerrada*\n"
             f"Cliente: {client_id}\n"
             f"Símbolo: {symbol}\n"
             f"Volumen: {volume}\n"
