@@ -25,9 +25,13 @@ class SocketManager:
             new_message = await InMessageManager().format_recieved_messages(
                 message_loaded
             )
-            if new_message:
-                await config.bot.send_message(config.chat_id, new_message)
-            await asyncio.sleep(0)
+            try:
+                if new_message:
+                    await config.bot.send_message(config.chat_id, new_message)
+            except Exception as e:
+                logger.error(f"Error al enviar mensaje: {e}")
+            finally:
+                await asyncio.sleep(0)
 
     async def send_message(self, message: str):
         """Envía un mensaje al servidor socket"""
