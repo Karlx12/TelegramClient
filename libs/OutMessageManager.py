@@ -121,7 +121,7 @@ class OutMessageManager:
         if not list_args:
             return {}
 
-        command = "open_positions"
+        command = "get_open_positions"
         client_id = list_args[0]
         logger.debug(f"client_id: {client_id}")
 
@@ -163,7 +163,7 @@ class OutMessageManager:
         if not list_args:
             return {}
 
-        command = "close_all"
+        command = "close_all_order"
         client_id = list_args[0]
         logger.debug(f"client_id: {client_id}")
 
