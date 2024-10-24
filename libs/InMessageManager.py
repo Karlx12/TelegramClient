@@ -22,18 +22,16 @@ class InMessageManager:
             return await InMessageManager.format_send_order_return(message)
         elif command == "close_order_return":
             return await InMessageManager.format_close_order_return(message)
-        elif command == "close_all_return":
+        elif command == "close_all_order_return":
             return await InMessageManager.format_close_all_return(message)
         elif command == "open_positions_return":
             return await InMessageManager.format_open_positions_return(message)
-        elif command == "get_info_account_return":
+        elif command == "account_info_return":
             return await InMessageManager.format_account_info_return(message)
-        elif command == "margin_level_return":
-            return await InMessageManager.format_margin_level_return(message)
-        elif command == "closed_positions_return":
-            return await InMessageManager.format_closed_positions_return(
-                message
-            )
+        # elif command == "closed_positions_return":
+        #     return await InMessageManager.format_closed_positions_return(
+        #         message
+        #     )
 
         else:
             return "Comando no reconocido."
