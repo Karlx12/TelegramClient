@@ -152,13 +152,13 @@ class InMessageManager:
             symbol = position.get("symbol", "N/A")
             volume = position.get("volume", 0.0)
             open_price = position.get("price", 0.0)
-            side = position.get("side", "N/A")
+            side = position.get("type", "N/A")
             side_text = "Compra" if side == 0 else "Venta"
 
             position_summaries.append(
                 f"Número Mágico: {magic}, Símbolo: {symbol}, "
-                + f"Volumen: {volume}, Precio de apertura: {open_price},"
-                + f" Tipo: {side_text}"
+                f"Volumen: {volume}, Precio de apertura: {open_price}, "
+                f"Tipo: {side_text}"
             )
 
         positions_text = "\n".join(position_summaries)
@@ -176,8 +176,9 @@ class InMessageManager:
         client_id = message.get("client_id", "N/A")
         balance = message.get("balance", 0.0)
         equity = message.get("equity", 0.0)
-        free_margin = message.get("free_margin", 0.0)
-        currency = message.get("currency", "N/A")
+        margin = message.get("margin", 0.0)
+        free_margin = message.get("freeMargin", 0.0)
+        currency = message.get("currency", "USD")
         timestamp = message.get("timestamp", 0)
 
         account_time = datetime.fromtimestamp(timestamp).strftime(
@@ -190,29 +191,8 @@ class InMessageManager:
             f"Fecha: {account_time}\n"
             f"Balance: {balance} {currency}\n"
             f"Equidad: {equity} {currency}\n"
+            f"Margen: {margin} {currency}\n"
             f"Margen Libre: {free_margin} {currency}"
-        )
-
-    @staticmethod
-    async def format_margin_level_return(message: dict) -> str:
-        """Formatea el mensaje de tipo margin_level_return"""
-        client_id = message.get("client_id", "N/A")
-        margin_level = message.get("margin_level", 0.0)
-        margin_used = message.get("margin_used", 0.0)
-        free_margin = message.get("free_margin", 0.0)
-        timestamp = message.get("timestamp", 0)
-
-        margin_time = datetime.fromtimestamp(timestamp).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-
-        return (
-            f"📊 *Nivel de Margen*\n"
-            f"Cliente: {client_id}\n"
-            f"Fecha: {margin_time}\n"
-            f"Nivel de Margen: {margin_level}%\n"
-            f"Margen Usado: {margin_used}\n"
-            f"Margen Libre: {free_margin}"
         )
 
     @staticmethod
