@@ -41,7 +41,7 @@ class InMessageManager:
         """Formatea el mensaje de tipo send_order_return"""
         client_id = message.get("client_id", "N/A")
         price = message.get("price", 0.0)
-        side = message.get("side", "N/A")
+        side = int(message.get("side", None))
         status_code = message.get("status_code", "N/A")
         status_message = InMessageManager.ERROR_CODES.get(
             str(status_code), "Código de estado no reconocido"
