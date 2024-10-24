@@ -100,37 +100,38 @@ class InMessageManager:
     async def format_close_all_return(message: dict) -> str:
         """
         Formatea el mensaje de tipo close_all_return que incluye una
-        lista de operaciones cerradas
+        lista de operaciones cerradas.
         """
         client_id = message.get("client_id", "N/A")
-        trades = message.get("trades", [])
+        orders = message.get("orders", [])
         close_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        trade_summaries = []
-        for trade in trades:
-            magic = trade.get("magic", "N/A")
-            symbol = trade.get("symbol", "N/A")
-            volume = trade.get("volume", 0.0)
-            close_price = trade.get("price", 0.0)
-            trade_summaries.append(
+        order_summaries = []
+        for order in orders:
+            magic = order.get("magic", "N/A")
+            symbol = order.get("symbol", "N/A")
+            volume_closed = order.get("volume_closed", 0.0)
+            close_price = order.get("price", 0.0)
+            order_summaries.append(
                 f"Número Mágico: {magic}, Símbolo: {symbol},"
-                f" Volumen: {volume}, Precio de cierre: {close_price}"
+                f" Volumen cerrado: {volume_closed},",
+                f" Precio de cierre: {close_price}",
             )
 
-        trades_text = "\n".join(trade_summaries)
+        orders_text = "\n".join(order_summaries)
 
         return (
             f"🔒 *Cierre de Todas las Órdenes*\n"
             f"Cliente: {client_id}\n"
             f"Fecha de cierre: {close_time}\n"
-            f"Órdenes cerradas:\n{trades_text}"
+            f"Órdenes cerradas:\n{orders_text}"
         )
 
     @staticmethod
     async def format_open_positions_return(message: dict) -> str:
         """Formatea el mensaje de tipo open_positions_return"""
         client_id = message.get("client_id", "N/A")
-        positions = message.get("positions", [])
+        positions = message.get("open_trades", [])
         timestamp = message.get("timestamp", 0)
 
         open_time = datetime.fromtimestamp(timestamp).strftime(
