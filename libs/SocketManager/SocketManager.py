@@ -21,17 +21,26 @@ class SocketManager:
         while True:
             data = await config.reader.readline()
             logger.debug(f"Received: {data.decode()}")
-            message_loaded = json.loads(data)
-            new_message = await InMessageManager().format_recieved_messages(
+            try:
+                message_loaded = json.loads(data)
+            except json.JSONDecodeError as e:
+                logger.error(f"Error al decodificar mensaje: {e}")
+                continue
+            try:
+                new_message = await InMessageManager().format_recieved_messages(
                 message_loaded
             )
+            except Exception as e:
+                logger.error(f"Error al formatear mensaje: {e}")
+                continue
+            logger.debug("New message: " + new_message)
             try:
                 if new_message:
                     await config.bot.send_message(config.chat_id, new_message)
             except Exception as e:
                 logger.error(f"Error al enviar mensaje: {e}")
-            finally:
-                await asyncio.sleep(0)
+            # finally:
+            #     await asyncio.sleep(0)
 
     async def send_message(self, message: str):
         """Envía un mensaje al servidor socket"""
