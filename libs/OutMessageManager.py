@@ -60,7 +60,7 @@ class OutMessageManager:
             "order": {
                 "side": int(side),
                 "magic": int(magic),
-                "symbol": symbol,
+                "symbol": str.upper(symbol),
                 "price": price,
                 "volume": volume,
                 "takeProfit": takeprofit,
