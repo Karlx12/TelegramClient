@@ -76,6 +76,7 @@ class InMessageManager:
         timestamp = message.get("timestamp", 0)
         magic = message.get("magic", "N/A")
         volume = message.get("volume_closed", 0.0)
+        result = message.get("result", 0.0)
         side = int(message.get("side", None))
 
         close_time = datetime.fromtimestamp(timestamp).strftime(
@@ -92,6 +93,7 @@ class InMessageManager:
             f"Símbolo: {symbol}\n"
             f"Volumen: {volume}\n"
             f"Número Mágico: {magic}\n"
+            f"Resultado: {result} usd\n"
             f"Fecha de cierre: {close_time}\n"
             f"Estado: {status_message}"
         )
