@@ -9,6 +9,7 @@ from libs.OutMessageCommands import (
     CloseAllCommand,
     MarginLevelCommand,
     OpenPositionsCommand,
+    PingCommand,  # Add this line
 )
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message, BotCommand
@@ -25,6 +26,7 @@ user_confirmation_state = {}
 COMMANDS = [
     BotCommand("start", "Start Bot"),
     BotCommand("help", "List of commands"),
+    BotCommand("ping", "Ping the server"),
     BotCommand("send", "Send order to server"),
     BotCommand("close", "Close an order"),
     BotCommand("info", "Get info of the account"),
@@ -34,6 +36,7 @@ COMMANDS = [
 ]
 
 commands = {
+    "ping": PingCommand.PingCommand(),  # Update this line
     "send": SendCommand.SendCommand(),
     "close": CloseCommand.CloseCommand(),
     "info": InfoCommand.InfoCommand(),
@@ -191,6 +194,10 @@ async def register_handlers():
             + "/close [client_id] [magic] [symbol]\n"
             + "/info [client_id]\n",
         )
+
+    @bot.message_handler(commands=["ping"])
+    async def handle_ping_message(message: Message):
+        await execute_command("ping", message.text, message)
 
 
 async def start_bot():

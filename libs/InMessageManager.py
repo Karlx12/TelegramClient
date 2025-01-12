@@ -28,6 +28,8 @@ class InMessageManager:
             return await InMessageManager.format_open_positions_return(message)
         elif command == "account_info_return":
             return await InMessageManager.format_account_info_return(message)
+        elif command == "pong":
+            return await InMessageManager.pong_return(message)
         # elif command == "closed_positions_return":
         #     return await InMessageManager.format_closed_positions_return(
         #         message
@@ -35,6 +37,25 @@ class InMessageManager:
 
         else:
             return "Comando no reconocido."
+
+    @staticmethod
+    async def pong_return(message: dict) -> str:
+        """Recibe el pong de alguna aplicación"""
+        client_id = message.get("client_id", "N/A")
+        results = message.get("results", {})
+
+        results_text = "\n".join(
+            [
+                f"{key}: {'Health' if value else 'Dead'}"
+                for key, value in results.items()
+            ]
+        )
+
+        return (
+            f"🏓 *Pong Recibido*\n"
+            f"Cliente: {client_id}\n"
+            f"\tResultados:\n{results_text}"
+        )
 
     @staticmethod
     async def format_send_order_return(message: dict) -> str:
@@ -114,12 +135,12 @@ class InMessageManager:
             symbol = order.get("symbol", "N/A")
             volume_closed = order.get("volume_closed", 0.0)
             close_price = order.get("price", 0.0)
-            result=order.get('result', 0.0)
+            result = order.get("result", 0.0)
             order_summaries.append(
-                f"Número Mágico: {magic}, Símbolo: {symbol},"+
-                f" Volumen cerrado: {volume_closed},"+
-                f" Precio de cierre: {close_price},"+
-                f" Resultado: {result} usd"
+                f"Número Mágico: {magic}, Símbolo: {symbol},"
+                + f" Volumen cerrado: {volume_closed},"
+                + f" Precio de cierre: {close_price},"
+                + f" Resultado: {result} usd"
             )
 
         orders_text = "\n".join(order_summaries)

@@ -20,6 +20,8 @@ class SocketManager:
         """Lee mensajes desde el servidor socket"""
         while True:
             data = await config.reader.readline()
+            if not data or data == b"":
+                continue
             logger.debug(f"Received: {data.decode()}")
             try:
                 message_loaded = json.loads(data)
@@ -27,9 +29,11 @@ class SocketManager:
                 logger.error(f"Error al decodificar mensaje: {e}")
                 continue
             try:
-                new_message = await InMessageManager().format_recieved_messages(
-                message_loaded
-            )
+                new_message = (
+                    await InMessageManager().format_recieved_messages(
+                        message_loaded
+                    )
+                )
             except Exception as e:
                 logger.error(f"Error al formatear mensaje: {e}")
                 continue
