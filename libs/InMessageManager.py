@@ -46,7 +46,8 @@ class InMessageManager:
 
         results_text = "\n".join(
             [
-                f"{key}: {'Health' if value else 'Dead'}"
+                f"\t{key}: {'Health' if value else 'Dead'},"
+                + f"\n\tBalance: {results.get('balance', 'N/A')}"
                 for key, value in results.items()
             ]
         )
@@ -54,7 +55,7 @@ class InMessageManager:
         return (
             f"🏓 *Pong Recibido*\n"
             f"Cliente: {client_id}\n"
-            f"\tResultados:\n{results_text}"
+            f"Resultados:\n{results_text}"
         )
 
     @staticmethod
