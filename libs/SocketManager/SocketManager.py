@@ -37,9 +37,9 @@ class SocketManager:
             except Exception as e:
                 logger.error(f"Error al formatear mensaje: {e}")
                 continue
-            logger.debug(
-                "New message: " + new_message.encode("utf-8").decode("utf-8")
-            )
+            # logger.debug(
+            #     "New message: " + new_message.encode("utf-8").decode("utf-8")
+            # )
             try:
                 if new_message:
                     await config.bot.send_message(config.chat_id, new_message)
