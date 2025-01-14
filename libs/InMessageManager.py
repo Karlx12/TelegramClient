@@ -1,6 +1,8 @@
 from datetime import datetime
 import json
 
+from libs import logger
+
 
 class InMessageManager:
     """
@@ -43,6 +45,7 @@ class InMessageManager:
         """Recibe el pong de alguna aplicación"""
         client_id = message.get("client_id", "N/A")
         results = message.get("results", {})
+        logger.debug(f"Results: {results}")
 
         results_text = "\n".join(
             [
