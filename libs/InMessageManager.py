@@ -49,8 +49,9 @@ class InMessageManager:
 
         results_text = "\n".join(
             [
-                f"\t{key}: {'Health' if value else 'Dead'},"
-                + f"\n\tBalance: {results.get('balance', 'N/A')}"
+                f"\t{key}: "
+                + f"{'Health' if value.get('responded', False) else 'Dead'},"
+                + f"\n\tBalance: {value.get('balance', 0.0)}"
                 for key, value in results.items()
             ]
         )
