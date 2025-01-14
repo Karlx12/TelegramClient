@@ -1,7 +1,7 @@
 from datetime import datetime
 import json
 
-from libs import logger
+from libs.logger import logger
 
 
 class InMessageManager:
