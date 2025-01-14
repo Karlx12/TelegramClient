@@ -19,7 +19,9 @@ level_console = os.getenv("LOG_LEVEL_CONSOLE", "INFO")
 logger.setLevel(levels[level_console])
 
 # Configura el archivo de log
-file_handler = logging.FileHandler("./logs/telegramserver.log")
+file_handler = logging.FileHandler(
+    "./logs/telegramserver.log", encoding="utf-8"
+)
 file_handler.setLevel(levels[level_file])
 
 # Configura un formato personalizado para los registros
@@ -33,7 +35,6 @@ logger.addHandler(file_handler)
 
 console_handler = logging.StreamHandler()
 console_handler.setLevel(levels[level_console])
-
 
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
