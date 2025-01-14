@@ -46,15 +46,16 @@ class InMessageManager:
         client_id = message.get("client_id", "N/A")
         results = message.get("results", {})
         logger.debug(f"Results: {results}")
-
-        results_text = "\n".join(
-            [
-                f"\t{key}: "
-                + f"{'Health' if value.get('responded', False) else 'Dead'},"
-                + f"\n\tBalance: {value.get('balance', 0.0)}"
-                for key, value in results.items()
-            ]
-        )
+        results_text = ""
+        for key, value in results.items():
+            if isinstance(value, dict):
+                status = "Health" if value.get("responded", False) else "Dead"
+                balance = value.get("balance", 0.0)
+                results_text += f"\t{key}: {status},\n\tBalance: {balance}\n"
+            else:
+                status = "N/A"
+                balance = value
+                results_text += f"\t{key}: {status},\n\tBalance: {balance}\n"
 
         return (
             f"🏓 *Pong Recibido*\n"
