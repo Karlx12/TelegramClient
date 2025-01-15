@@ -10,6 +10,7 @@ from libs.OutMessageCommands import (
     MarginLevelCommand,
     OpenPositionsCommand,
     PingCommand,  # Add this line
+    SetPairCommand,  # Add this line
 )
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message, BotCommand
@@ -26,6 +27,7 @@ user_confirmation_state = {}
 COMMANDS = [
     BotCommand("start", "Start Bot"),
     BotCommand("help", "List of commands"),
+    BotCommand("setpair", "Set the pair of chat_id and client_id"),
     BotCommand("ping", "Ping the server"),
     BotCommand("send", "Send order to server"),
     BotCommand("close", "Close an order"),
@@ -36,13 +38,14 @@ COMMANDS = [
 ]
 
 commands = {
-    "ping": PingCommand.PingCommand(),  # Update this line
+    "ping": PingCommand.PingCommand(),
     "send": SendCommand.SendCommand(),
     "close": CloseCommand.CloseCommand(),
     "info": InfoCommand.InfoCommand(),
     "margin_level": MarginLevelCommand.MarginLevelCommand(),
     "close_all": CloseAllCommand.CloseAllCommand(),
     "open_positions": OpenPositionsCommand.OpenPositionsCommand(),
+    "set_pair": SetPairCommand.SetPairCommand(),
 }
 
 
@@ -135,7 +138,9 @@ async def register_handlers():
 
     @bot.message_handler(commands=["send"])
     async def handle_send_message(message: Message):
-        await execute_command("send", message.text, message)
+        await execute_command(
+            "send", message.text + "," + message.chat.id, message
+        )
 
     @bot.message_handler(commands=["close"])
     async def handle_close_message(message: Message):
@@ -198,6 +203,10 @@ async def register_handlers():
     @bot.message_handler(commands=["ping"])
     async def handle_ping_message(message: Message):
         await execute_command("ping", message.text, message)
+
+    @bot.message_handler(commands=["setpair"])
+    async def handle_set_pair_message(message: Message):
+        await execute_command("set_pair", message.text, message)
 
 
 async def start_bot():
