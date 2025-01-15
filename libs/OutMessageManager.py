@@ -181,13 +181,7 @@ class OutMessageManager:
         """Formatea un mensaje de tipo 'ping' a un diccionario válido"""
         command = "ping"
         name = "health_ping"
-        subcommand = {
-            "clients": ["Metatrader"],
-            "notifier": "Telegram_bot",
-        }
-
         return {
             "command": command,
             "name": name,
-            "subcommand": subcommand,
         }

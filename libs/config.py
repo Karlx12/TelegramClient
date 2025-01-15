@@ -11,6 +11,7 @@ class Config:
         self._chat_id = None
         self._bot = None
         self._socket_manager = None
+        self._chat_client_pairs = {}
 
     @property
     def writer(self) -> asyncio.StreamWriter:
@@ -47,6 +48,14 @@ class Config:
     @property
     def lock(self):
         return self._lock
+
+    @property
+    def chat_client_pairs(self):
+        return self._chat_client_pairs
+
+    @chat_client_pairs.setter
+    def chat_client_pairs(self, value):
+        self._chat_client_pairs = value
 
     async def set_socket_manager(self, value):
         async with self._lock:

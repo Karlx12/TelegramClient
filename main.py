@@ -5,6 +5,9 @@ from libs.TelegramBot import start_bot
 
 
 async def main():
+    config.chat_client_pairs = (
+        {}
+    )  # Initialize the chat-client pairs dictionary
     await config.set_socket_manager(SocketManager())
     socket_manager = await config.get_socket_manager()
 

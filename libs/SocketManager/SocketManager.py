@@ -41,12 +41,12 @@ class SocketManager:
                 "New message: " + new_message.encode("utf-8").decode("utf-8")
             )
             try:
-                if new_message:
-                    await config.bot.send_message(config.chat_id, new_message)
+                client_id = message_loaded.get("client_id")
+                chat_id = config.chat_client_pairs.get(client_id)
+                if new_message and chat_id:
+                    await config.bot.send_message(chat_id, new_message)
             except Exception as e:
                 logger.error(f"Error al enviar mensaje: {e}")
-            # finally:
-            #     await asyncio.sleep(0)
 
     async def send_message(self, message: str):
         """Envía un mensaje al servidor socket"""
