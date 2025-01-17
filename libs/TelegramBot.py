@@ -206,7 +206,10 @@ async def register_handlers():
 
     @bot.message_handler(commands=["setpair"])
     async def handle_set_pair_message(message: Message):
-        await execute_command("set_pair", message.text, message)
+        chat_id = message.chat.id
+        await execute_command(
+            "set_pair", message.text + " " + str(chat_id), message
+        )
 
 
 async def start_bot():

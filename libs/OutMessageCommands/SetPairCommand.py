@@ -7,8 +7,9 @@ class SetPairCommand(ICommand):
 
     async def execute(self, message: str) -> bool:
         try:
+            logger.debug(f"Set pair: {message}")
             client_id, chat_id = message.split()
-            config.chat_client_pairs[client_id] = int(chat_id)
+            config.chat_client_pairs[client_id] = chat_id
             logger.info(f"Set pair: {client_id} -> {chat_id}")
             return True
         except Exception as e:
