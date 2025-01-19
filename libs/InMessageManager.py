@@ -32,6 +32,9 @@ class InMessageManager:
             return await InMessageManager.format_account_info_return(message)
         elif command == "pong":
             return await InMessageManager.pong_return(message)
+        elif command == "info":
+            return await InMessageManager.info_message_format(message)
+
         # elif command == "closed_positions_return":
         #     return await InMessageManager.format_closed_positions_return(
         #         message
@@ -44,23 +47,14 @@ class InMessageManager:
     async def pong_return(message: dict) -> str:
         """Recibe el pong de alguna aplicación"""
         client_id = message.get("client_id", "N/A")
-        results = message.get("results", {})
-        logger.debug(f"Results: {results}")
-        results_text = ""
-        for key, value in results.items():
-            if isinstance(value, dict):
-                status = "Health" if value.get("responded", False) else "Dead"
-                balance = value.get("balance", 0.0)
-                results_text += f"\t{key}: {status},\n\tBalance: {balance}\n"
-            else:
-                status = "N/A"
-                balance = value
-                results_text += f"\t{key}: {status},\n\tBalance: {balance}\n"
+        balance = message.get("balance", 0.0)
+        responded = message.get("responded", {})
 
         return (
             f"🏓 *Pong Recibido*\n"
             f"Cliente: {client_id}\n"
-            f"Resultados:\n{results_text}"
+            f"Balance: {balance}\n",
+            f"Respondido: {responded}",
         )
 
     @staticmethod
@@ -259,3 +253,19 @@ class InMessageManager:
             f"Fecha de cierre: {close_time}\n"
             f"Posiciones cerradas:\n{closed_positions_text}"
         )
+
+    @staticmethod
+    def info_message_format(message: str) -> dict:
+        """Formatea un mensaje de tipo 'info' a un diccionario"""
+        list_args = InMessageManager.parse_message(message, 2)
+        if not list_args:
+            return {}
+
+        client_id = message.get("client_id", "N/A")
+        logger.debug(f"client_id: {client_id}")
+
+        if not client_id:
+            logger.error("El 'client_id' no es válido")
+            return {}
+
+        return f"{client_id} se ha desconectado"
