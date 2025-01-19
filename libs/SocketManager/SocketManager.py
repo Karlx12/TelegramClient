@@ -59,7 +59,7 @@ class SocketManager:
         LOGIN = json.dumps(
             {
                 "command": "register",
-                "type_client": "Telegram",
+                "type_client": "Notifier",
                 "name": "Telegram_bot",
             }
         )
