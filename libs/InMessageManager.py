@@ -34,14 +34,16 @@ class InMessageManager:
             return await InMessageManager.pong_return(message)
         elif command == "info":
             return await InMessageManager.info_message_format(message)
-
-        # elif command == "closed_positions_return":
-        #     return await InMessageManager.format_closed_positions_return(
-        #         message
-        #     )
-
+        elif command == "error":
+            return await InMessageManager.format_error_message(message)
         else:
             return "Comando no reconocido."
+
+    @staticmethod
+    async def format_error_message(message: dict) -> str:
+        """Formatea el mensaje de tipo error"""
+        error_message = message.get("message", "Error desconocido")
+        return f"❌ *Error*\nMensaje: {error_message}"
 
     @staticmethod
     async def pong_return(message: dict) -> str:
