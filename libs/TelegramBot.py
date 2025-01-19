@@ -138,9 +138,7 @@ async def register_handlers():
 
     @bot.message_handler(commands=["send"])
     async def handle_send_message(message: Message):
-        await execute_command(
-            "send", message.text + "," + message.chat.id, message
-        )
+        await execute_command("send", message.text, message)
 
     @bot.message_handler(commands=["close"])
     async def handle_close_message(message: Message):
