@@ -1,8 +1,6 @@
 from datetime import datetime
 import json
 
-from libs.logger import logger
-
 
 class InMessageManager:
     """
@@ -258,16 +256,4 @@ class InMessageManager:
 
     @staticmethod
     def info_message_format(message: str) -> dict:
-        """Formatea un mensaje de tipo 'info' a un diccionario"""
-        list_args = InMessageManager.parse_message(message, 2)
-        if not list_args:
-            return {}
-
-        client_id = message.get("client_id", "N/A")
-        logger.debug(f"client_id: {client_id}")
-
-        if not client_id:
-            logger.error("El 'client_id' no es válido")
-            return {}
-
-        return f"{client_id} se ha desconectado"
+        pass
