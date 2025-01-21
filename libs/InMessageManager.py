@@ -256,5 +256,5 @@ class InMessageManager:
 
     @staticmethod
     def info_message_format(message: str) -> dict:
-        client_disconnected = message.get("client_id", "N/A")
-        return f"📊 *Información*\nCliente desconectado: {client_disconnected}"
+        message = message.get("message", "N/A")
+        return message
