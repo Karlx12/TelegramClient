@@ -48,13 +48,13 @@ class InMessageManager:
         """Recibe el pong de alguna aplicación"""
         client_id = message.get("client_id", "N/A")
         balance = message.get("balance", 0.0)
-        responded = message.get("responded", {})
+        responded = "Sí" if message.get("responded", {}) else "No"
 
         return (
             f"🏓 *Pong Recibido*\n"
-            f"Cliente: {client_id}\n"
-            f"Balance: {balance}\n",
-            f"Respondido: {responded}",
+            f"Cliente: `{client_id}`\n"
+            f"Balance: `{balance}`\n"
+            f"Respondido: `{responded}`"
         )
 
     @staticmethod
@@ -79,13 +79,13 @@ class InMessageManager:
 
         return (
             f"📊 *Orden {side_text}*\n"
-            f"Cliente: {client_id}\n"
-            f"Símbolo: {symbol}\n"
-            f"Precio: {price}\n"
-            f"Volumen: {volume}\n"
-            f"Número Mágico: {magic}\n"
-            f"Fecha: {trade_time}\n"
-            f"Estado: {status_message}"
+            f"Cliente: `{client_id}`\n"
+            f"Símbolo: `{symbol}`\n"
+            f"Precio: `{price}`\n"
+            f"Volumen: `{volume}`\n"
+            f"Número Mágico: `{magic}`\n"
+            f"Fecha: `{trade_time}`\n"
+            f"Estado: `{status_message}`"
         )
 
     @staticmethod
@@ -110,13 +110,13 @@ class InMessageManager:
 
         return (
             f"🔒 *Orden de {side_text} Cerrada*\n"
-            f"Cliente: {client_id}\n"
-            f"Símbolo: {symbol}\n"
-            f"Volumen: {volume}\n"
-            f"Número Mágico: {magic}\n"
-            f"Resultado: {result} usd\n"
-            f"Fecha de cierre: {close_time}\n"
-            f"Estado: {status_message}"
+            f"Cliente: `{client_id}`\n"
+            f"Símbolo: `{symbol}`\n"
+            f"Volumen: `{volume}`\n"
+            f"Número Mágico: `{magic}`\n"
+            f"Resultado: `{result} usd`\n"
+            f"Fecha de cierre: `{close_time}`\n"
+            f"Estado: `{status_message}`"
         )
 
     @staticmethod
@@ -137,18 +137,18 @@ class InMessageManager:
             close_price = order.get("price", 0.0)
             result = order.get("result", 0.0)
             order_summaries.append(
-                f"Número Mágico: {magic}, Símbolo: {symbol},"
-                + f" Volumen cerrado: {volume_closed},"
-                + f" Precio de cierre: {close_price},"
-                + f" Resultado: {result} usd"
+                f"Número Mágico: `{magic}`, Símbolo: `{symbol}`,"
+                + f" Volumen cerrado: `{volume_closed}`,"
+                + f" Precio de cierre: `{close_price}`,"
+                + f" Resultado: `{result} usd`"
             )
 
         orders_text = "\n".join(order_summaries)
 
         return (
             f"🔒 *Cierre de Todas las Órdenes*\n"
-            f"Cliente: {client_id}\n"
-            f"Fecha de cierre: {close_time}\n"
+            f"Cliente: `{client_id}`\n"
+            f"Fecha de cierre: `{close_time}`\n"
             f"Órdenes cerradas:\n{orders_text}"
         )
 
@@ -166,8 +166,8 @@ class InMessageManager:
         if not positions:
             return (
                 f"📂 *Posiciones Abiertas*\n"
-                f"Cliente: {client_id}\n"
-                f"Fecha de consulta: {open_time}\n"
+                f"Cliente: `{client_id}`\n"
+                f"Fecha de consulta: `{open_time}`\n"
                 f"No hay posiciones abiertas."
             )
 
@@ -181,17 +181,17 @@ class InMessageManager:
             side_text = "Compra" if side == 0 else "Venta"
 
             position_summaries.append(
-                f"Número Mágico: {magic}, Símbolo: {symbol}, "
-                f"Volumen: {volume}, Precio de apertura: {open_price}, "
-                f"Tipo: {side_text}"
+                f"Número Mágico: `{magic}`, Símbolo: `{symbol}`, "
+                f"Volumen: `{volume}`, Precio de apertura: `{open_price}`, "
+                f"Tipo: `{side_text}`"
             )
 
         positions_text = "\n".join(position_summaries)
 
         return (
             f"📂 *Posiciones Abiertas*\n"
-            f"Cliente: {client_id}\n"
-            f"Fecha de consulta: {open_time}\n"
+            f"Cliente: `{client_id}`\n"
+            f"Fecha de consulta: `{open_time}`\n"
             f"Posiciones:\n{positions_text}"
         )
 
@@ -212,12 +212,12 @@ class InMessageManager:
 
         return (
             f"🏦 *Información de la Cuenta*\n"
-            f"Cliente: {client_id}\n"
-            f"Fecha: {account_time}\n"
-            f"Balance: {balance} {currency}\n"
-            f"Equidad: {equity} {currency}\n"
-            f"Margen: {margin} {currency}\n"
-            f"Margen Libre: {free_margin} {currency}"
+            f"Cliente: `{client_id}`\n"
+            f"Fecha: `{account_time}`\n"
+            f"Balance: `{balance} {currency}`\n"
+            f"Equidad: `{equity} {currency}`\n"
+            f"Margen: `{margin} {currency}`\n"
+            f"Margen Libre: `{free_margin} {currency}`"
         )
 
     @staticmethod
@@ -240,17 +240,17 @@ class InMessageManager:
             profit = position.get("profit", 0.0)
 
             closed_summaries.append(
-                f"Número Mágico: {magic}, Símbolo: {symbol},"
-                + f" Volumen: {volume}, Precio de cierre: {close_price},"
-                + f" Ganancia: {profit}"
+                f"Número Mágico: `{magic}`, Símbolo: `{symbol}`,"
+                + f" Volumen: `{volume}`, Precio de cierre: `{close_price}`,"
+                + f" Ganancia: `{profit}`"
             )
 
         closed_positions_text = "\n".join(closed_summaries)
 
         return (
             f"🔒 *Posiciones Cerradas*\n"
-            f"Cliente: {client_id}\n"
-            f"Fecha de cierre: {close_time}\n"
+            f"Cliente: `{client_id}`\n"
+            f"Fecha de cierre: `{close_time}`\n"
             f"Posiciones cerradas:\n{closed_positions_text}"
         )
 

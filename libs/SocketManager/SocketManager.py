@@ -19,34 +19,39 @@ class SocketManager:
     async def receive_messages(self):
         """Lee mensajes desde el servidor socket"""
         while True:
-            data = await config.reader.readline()
-            if not data or data == b"":
-                continue
-            logger.debug(f"Received: {data.decode()}")
             try:
-                message_loaded = json.loads(data)
-            except json.JSONDecodeError as e:
-                logger.error(f"Error al decodificar mensaje: {e}")
-                continue
-            try:
-                new_message = (
-                    await InMessageManager().format_recieved_messages(
-                        message_loaded
+                data = await config.reader.readline()
+                if not data or data == b"":
+                    continue
+                logger.debug(f"Received: {data.decode()}")
+                try:
+                    message_loaded = json.loads(data)
+                except json.JSONDecodeError as e:
+                    logger.error(f"Error al decodificar mensaje: {e}")
+                    continue
+                try:
+                    new_message = (
+                        await InMessageManager().format_recieved_messages(
+                            message_loaded
+                        )
                     )
+                except Exception as e:
+                    logger.error(f"Error al formatear mensaje: {e}")
+                    continue
+                logger.debug(
+                    "New message: "
+                    + new_message.encode("utf-8").decode("utf-8")
                 )
+                try:
+                    client_id = message_loaded.get("client_id")
+                    chat_id = config.chat_client_pairs.get(client_id)
+                    if new_message and chat_id:
+                        await config.bot.send_message(chat_id, new_message)
+                except Exception as e:
+                    logger.error(f"Error al enviar mensaje: {e}")
             except Exception as e:
-                logger.error(f"Error al formatear mensaje: {e}")
-                continue
-            logger.debug(
-                "New message: " + new_message.encode("utf-8").decode("utf-8")
-            )
-            try:
-                client_id = message_loaded.get("client_id")
-                chat_id = config.chat_client_pairs.get(client_id)
-                if new_message and chat_id:
-                    await config.bot.send_message(chat_id, new_message)
-            except Exception as e:
-                logger.error(f"Error al enviar mensaje: {e}")
+                logger.error(f"Error en receive_messages: {e}")
+                break  # Exit the loop to trigger reconnection
 
     async def send_message(self, message: str):
         """Envía un mensaje al servidor socket"""

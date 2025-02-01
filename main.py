@@ -11,13 +11,18 @@ async def main():
     await config.set_socket_manager(SocketManager())
     socket_manager = await config.get_socket_manager()
 
-    # Conectar el cliente al servidor socket
-    await socket_manager.connect("localhost", 8080)
+    while True:
+        try:
+            # Conectar el cliente al servidor socket
+            await socket_manager.connect("localhost", 8080)
 
-    await asyncio.gather(
-        socket_manager.receive_messages(),  # Recibe mensajes del socket
-        start_bot(),  # Ejecuta el bot de Telegram
-    )
+            await asyncio.gather(
+                socket_manager.receive_messages(),  # Recibe mensajes del socket
+                start_bot(),  # Ejecuta el bot de Telegram
+            )
+        except Exception as e:
+            logger.warning(f"Connection lost, retrying in 5 seconds: {e}")
+            await asyncio.sleep(5)  # Pausa antes de intentar reconectar
 
 
 if __name__ == "__main__":

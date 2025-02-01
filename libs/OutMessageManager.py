@@ -1,4 +1,5 @@
 from libs.logger import logger
+import json
 
 
 class OutMessageManager:
@@ -53,22 +54,27 @@ class OutMessageManager:
 
         side = 0 if side.lower() == "buy" else 1
 
-        return {
-            "command": command,
-            "client_id": client_id,
-            "type_client": "Telegram",
-            "order": {
-                "side": int(side),
-                "magic": int(magic),
-                "symbol": str.upper(symbol),
-                "price": price,
-                "volume": volume,
-                "takeProfit": takeprofit,
-                "stopLoss": stoploss,
-                "slippage": 1.0,
-                "comment": "",
-            },
-        }
+        return json.loads(
+            json.dumps(
+                {
+                    "command": command,
+                    "client_id": client_id,
+                    "type_client": "Telegram",
+                    "order": {
+                        "side": int(side),
+                        "magic": int(magic),
+                        "symbol": str.upper(symbol),
+                        "price": price,
+                        "volume": volume,
+                        "takeProfit": takeprofit,
+                        "stopLoss": stoploss,
+                        "slippage": 1.0,
+                        "comment": "",
+                    },
+                },
+                separators=(",", ":"),
+            )
+        )
 
     @staticmethod
     def close_command_format(message: str) -> dict:
@@ -85,12 +91,17 @@ class OutMessageManager:
             logger.error("El 'client_id', 'magic' o 'symbol' no son válidos")
             return {}
 
-        return {
-            "command": command,
-            "client_id": client_id,
-            "magic": int(magic),
-            "symbol": symbol.upper(),
-        }
+        return json.loads(
+            json.dumps(
+                {
+                    "command": command,
+                    "client_id": client_id,
+                    "magic": int(magic),
+                    "symbol": symbol.upper(),
+                },
+                separators=(",", ":"),
+            )
+        )
 
     @staticmethod
     def info_command_format(message: str) -> dict:
@@ -107,10 +118,15 @@ class OutMessageManager:
             logger.error("El 'client_id' no es válido")
             return {}
 
-        return {
-            "command": command,
-            "client_id": client_id,
-        }
+        return json.loads(
+            json.dumps(
+                {
+                    "command": command,
+                    "client_id": client_id,
+                },
+                separators=(",", ":"),
+            )
+        )
 
     @staticmethod
     def open_positions_command_format(message: str) -> dict:
@@ -129,10 +145,15 @@ class OutMessageManager:
             logger.error("El 'client_id' no es válido")
             return {}
 
-        return {
-            "command": command,
-            "client_id": client_id,
-        }
+        return json.loads(
+            json.dumps(
+                {
+                    "command": command,
+                    "client_id": client_id,
+                },
+                separators=(",", ":"),
+            )
+        )
 
     @staticmethod
     def margin_level_command_format(message: str) -> dict:
@@ -151,10 +172,15 @@ class OutMessageManager:
             logger.error("El 'client_id' no es válido")
             return {}
 
-        return {
-            "command": command,
-            "client_id": client_id,
-        }
+        return json.loads(
+            json.dumps(
+                {
+                    "command": command,
+                    "client_id": client_id,
+                },
+                separators=(",", ":"),
+            )
+        )
 
     @staticmethod
     def close_all_command_format(message: str) -> dict:
@@ -171,17 +197,25 @@ class OutMessageManager:
             logger.error("El 'client_id' no es válido")
             return {}
 
-        return {
-            "command": command,
-            "client_id": client_id,
-        }
+        return json.loads(
+            json.dumps(
+                {
+                    "command": command,
+                    "client_id": client_id,
+                },
+                separators=(",", ":"),
+            )
+        )
 
     @staticmethod
     def ping_command_format() -> dict:
         """Formatea un mensaje de tipo 'ping' a un diccionario válido"""
-        command = "ping"
-        name = "health_ping"
-        return {
-            "command": command,
-            "name": name,
-        }
+        return json.loads(
+            json.dumps(
+                {
+                    "command": "ping",
+                    "name": "health_ping",
+                },
+                separators=(",", ":"),
+            )
+        )

@@ -234,6 +234,8 @@ async def start_bot():
                 f"Error en la conexión, reintentando en 5 segundos: {e}"
             )
             await asyncio.sleep(5)  # Pausa antes de intentar reconectar
-        finally:
-            logger.info("Cerrando sesión")
-            await bot.close_session()
+        # Remove session closing to prevent unexpected shutdowns
+        # finally:
+        #     logger.info("Cerrando sesión")
+        #     await bot.close_session()
+        #     logger.info("Sesión finalizada")
