@@ -255,6 +255,6 @@ class InMessageManager:
         )
 
     @staticmethod
-    def info_message_format(message: str) -> dict:
+    async def info_message_format(message: str) -> dict:
         message = message.get("message", "N/A")
         return message
