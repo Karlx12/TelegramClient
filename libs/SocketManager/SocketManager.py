@@ -45,7 +45,9 @@ class SocketManager:
                 try:
                     client_id = message_loaded.get("client_id")
                     chat_id = config.chat_client_pairs.get(client_id)
+                    logger.debug(f"client_id: {client_id}, chat_id: {chat_id}")
                     if new_message and chat_id:
+                        logger.debug(f"Sending message to chat_id: {chat_id}")
                         await config.bot.send_message(chat_id, new_message)
                 except Exception as e:
                     logger.error(f"Error al enviar mensaje: {e}")

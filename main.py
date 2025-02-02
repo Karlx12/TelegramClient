@@ -2,6 +2,7 @@ import asyncio
 from libs.SocketManager.SocketManager import SocketManager
 from libs.config import config
 from libs.TelegramBot import start_bot
+from libs.logger import logger
 
 
 async def main():
@@ -17,8 +18,8 @@ async def main():
             await socket_manager.connect("localhost", 8080)
 
             await asyncio.gather(
-                socket_manager.receive_messages(),  # Recibe mensajes del socket
-                start_bot(),  # Ejecuta el bot de Telegram
+                socket_manager.receive_messages(),
+                start_bot(),
             )
         except Exception as e:
             logger.warning(f"Connection lost, retrying in 5 seconds: {e}")
