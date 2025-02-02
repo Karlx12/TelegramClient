@@ -1,5 +1,6 @@
 # config.py
 import asyncio
+import os
 from telebot.async_telebot import AsyncTeleBot
 
 
@@ -80,5 +81,10 @@ class Config:
         async with self._lock:
             self.chat_id = value
 
+
+tag_users = {
+    "meta1_test": os.getenv("META1_TEST_USERS", "").split(","),
+    "meta2_test": os.getenv("META2_TEST_USERS", "").split(","),
+}
 
 config = Config()

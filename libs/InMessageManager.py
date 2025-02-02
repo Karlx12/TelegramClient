@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+from libs.config import tag_users  # Actualizar el import
 
 
 class InMessageManager:
@@ -255,6 +256,26 @@ class InMessageManager:
         )
 
     @staticmethod
-    async def info_message_format(message: str) -> dict:
-        message = message.get("message", "N/A")
-        return message
+    async def info_message_format(message: dict) -> str:
+        m_text = message.get("message", "N/A")
+        client_id = message.get("client_id", "N/A")
+        topic = message.get("topic", "")
+
+        if topic == "disconnect":
+            user_ids = tag_users.get(client_id, [])
+            if user_ids:
+                # Filtrar y convertir IDs válidos
+                valid_user_ids = [
+                    int(uid.strip())
+                    for uid in user_ids
+                    if uid.strip().isdigit()
+                ]
+                if valid_user_ids:
+                    # Crear las menciones para cada usuario
+                    mentions = " ".join(
+                        f"[Usuario](tg://user?id={uid})"
+                        for uid in valid_user_ids
+                    )
+                    return f"⚠️ *Alerta de Desconexión*\n{mentions}\n{m_text}"
+            return f"⚠️ *Alerta de Desconexión*\n{m_text}"
+        return m_text
