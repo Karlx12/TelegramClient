@@ -97,8 +97,8 @@ class InMessageManager:
         status_code = message.get("status_code", "N/A")
         timestamp = message.get("timestamp", 0)
         magic = message.get("magic", "N/A")
-        volume = message.get("volume_closed", 0.0)
-        result = message.get("result", 0.0)
+        volume = message.get("volume_close", message.get("volume", 0.0))
+        result = message.get("profit", 0.0)
         side = int(message.get("side", None))
 
         close_time = datetime.fromtimestamp(timestamp).strftime(
