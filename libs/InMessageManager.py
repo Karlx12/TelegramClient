@@ -134,14 +134,17 @@ class InMessageManager:
         for order in orders:
             magic = order.get("magic", "N/A")
             symbol = order.get("symbol", "N/A")
-            volume_closed = order.get("volume_closed", 0.0)
-            close_price = order.get("price", 0.0)
-            result = order.get("result", 0.0)
+            volume_closed = order.get("volume_close", 0.0)
+            close_price = order.get("close_price", 0.0)
+            result = order.get("profit", 0.0)
+            side = int(order.get("side", None))
+            side_text = "Compra" if side == 0 else "Venta"
             order_summaries.append(
                 f"Número Mágico: `{magic}`, Símbolo: `{symbol}`,"
                 + f" Volumen cerrado: `{volume_closed}`,"
                 + f" Precio de cierre: `{close_price}`,"
-                + f" Resultado: `{result} usd`"
+                + f" Resultado: `{result} usd`,"
+                + f" Tipo: `{side_text}`"
             )
 
         orders_text = "\n".join(order_summaries)
