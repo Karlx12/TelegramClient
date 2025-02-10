@@ -138,21 +138,25 @@ class InMessageManager:
             close_price = order.get("close_price", 0.0)
             result = order.get("profit", 0.0)
             side = int(order.get("side", None))
+            open_time = datetime.fromtimestamp(
+                order.get("open_time", 0)
+            ).strftime("%Y-%m-%d %H:%M:%S")
             side_text = "Compra" if side == 0 else "Venta"
+
             order_summaries.append(
-                f"Número Mágico: `{magic}`, Símbolo: `{symbol}`,"
-                + f" Volumen cerrado: `{volume_closed}`,"
-                + f" Precio de cierre: `{close_price}`,"
-                + f" Resultado: `{result} usd`,"
-                + f" Tipo: `{side_text}`"
+                f"Número Mágico: `{magic}`, Símbolo: `{symbol}`\n"
+                f"Volumen cerrado: `{volume_closed}`, Tipo: `{side_text}`\n"
+                f"Precio cierre: `{close_price}`\n"
+                f"Fecha apertura: `{open_time}`\n"
+                f"Resultado: `{result} usd`"
             )
 
-        orders_text = "\n".join(order_summaries)
+        orders_text = "\n\n".join(order_summaries)
 
         return (
             f"🔒 *Cierre de Todas las Órdenes*\n"
             f"Cliente: `{client_id}`\n"
-            f"Fecha de cierre: `{close_time}`\n"
+            f"Fecha de cierre: `{close_time}`\n\n"
             f"Órdenes cerradas:\n{orders_text}"
         )
 
